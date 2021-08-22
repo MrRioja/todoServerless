@@ -5,10 +5,9 @@ export const handle: APIGatewayProxyHandler = async (event) => {
   const { userid } = event.pathParameters;
 
   const todos = await document
-    .query({
+    .scan({
       TableName: "todos",
-      IndexName: "userId-index",
-      KeyConditionExpression: "userid = :userid",
+      FilterExpression: "user_id = :userid",
       ExpressionAttributeValues: {
         ":userid": userid,
       },
