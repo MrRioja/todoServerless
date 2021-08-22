@@ -1,0 +1,21 @@
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+
+# Dynamo directories
+.dynamodb
+
+# Webpack directories
+.webpack
+
+# .lock files
+*.lock
+
+# Env
+*.env
+
+# PDF's
+*.pdf
