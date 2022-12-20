@@ -1,95 +1,119 @@
-# Serverless - AWS Node.js Typescript
+# ToDos Serverless - Ignite NodeJS
 
-This project has been generated using the `aws-nodejs-typescript` template from the [Serverless framework](https://www.serverless.com/).
+<p align="center">
+  <img src="https://img.shields.io/static/v1?label=todo&message=serverless&color=blueviolet&style=for-the-badge"/>
+  <img src="https://img.shields.io/github/license/MrRioja/todoServerless?color=blueviolet&logo=License&style=for-the-badge"/>
+  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/MrRioja/todoServerless?color=blueviolet&logo=TypeScript&logoColor=white&style=for-the-badge">
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/MrRioja/todoServerless?color=blueviolet&style=for-the-badge">
+</p>
+<br>
 
-For detailed instructions, please refer to the [documentation](https://www.serverless.com/framework/docs/providers/aws/).
+<p align="center">
+  <a href="#sobre">Sobre</a> •
+  <a href="#todoserverless">todoServerless</a> •
+  <a href="#instalação">Instalação</a> •
+  <a href="#tecnologias">Tecnologias</a> •
+  <a href="#autor">Autor</a>  
+</p>
 
-## Installation/deployment instructions
+## Sobre
 
-Depending on your preferred package manager, follow the instructions below to deploy your project.
+Desafio proposto no ultimo desafio da trilha de NodeJS no bootcamp Ignite da Rocketseat. A ideia foi construir uma API utilizando o framework serverless para consolidar os conteudos aprendidos no módulo VI do curso.
 
-> **Requirements**: NodeJS `lts/fermium (v.14.15.0)`. If you're using [nvm](https://github.com/nvm-sh/nvm), run `nvm use` to ensure you're using the same Node version in local and in your lambda's runtime.
+## todoServerless
 
-### Using NPM
+API para gerenciamento de todos feita utilizando o framework serverless.
+Como o proposito aqui é praticar o que foi aprendido no módulo VI, a aplicação é bem simples e possui os endpoints abaixo:
 
-- Run `npm i` to install the project dependencies
-- Run `npx sls deploy` to deploy this stack to AWS
+<details>
+    <summary>GET <code>/todos/{userid}</code></summary>
+    <br>
+    Essa rota deve receber o <code>id</code> de um usuário pelo <code>pathParameters</code> (o mesmo id que foi usado para criar algum <code>todo</code>). A rota deve retornar os todos que possuírem o <code>user_id</code> igual ao <code>id</code> recebido pelos parâmetros.
+</details>
 
-### Using Yarn
+<details>
+    <summary>POST <code>/todos/{userid}</code></summary>
+    <br>
+    Essa rota deve receber o <code>id</code> de um usuário pelo <code>pathParameters</code> (você pode criar esse id manualmente apenas para preencher o campo) e os seguintes campos no corpo da requisição: <code>title</code> e <code>deadline</code>, onde <code>deadline</code> é a data limite para o <code>todo</code>.
+    <br>
+    O <code>todo</code> deverá ser salvo com os seguintes campos no DynamoDB:
+    <br>
+    <pre>
+        <code>
+            { 
+                id: 'uuid', // id gerado para garantir um único todo com o mesmo id
+                user_id: 'uuid' // id do usuário recebido no pathParameters
+                title: 'Nome da tarefa',
+                done: false, // inicie sempre como false
+                deadline: new Date(deadline)
+            }
+        </code>
+    </pre>
+</details>
 
-- Run `yarn` to install the project dependencies
-- Run `yarn sls deploy` to deploy this stack to AWS
+## Instalação
 
-## Test your service
+Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
+[Git](https://git-scm.com), [Node.js](https://nodejs.org/en/).
+Além disso é bom ter um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/).
 
-This template contains a single lambda function triggered by an HTTP request made on the provisioned API Gateway REST API `/hello` route with `POST` method. The request body must be provided as `application/json`. The body structure is tested by API Gateway against `src/functions/hello/schema.ts` JSON-Schema definition: it must contain the `name` property.
+### 🎲 Rodando o Back End (servidor)
 
-- requesting any other path than `/hello` with any other method than `POST` will result in API Gateway returning a `403` HTTP error code
-- sending a `POST` request to `/hello` with a payload **not** containing a string property named `name` will result in API Gateway returning a `400` HTTP error code
-- sending a `POST` request to `/hello` with a payload containing a string property named `name` will result in API Gateway returning a `200` HTTP status code with a message saluting the provided name and the detailed event processed by the lambda
+```bash
+# Clone este repositório
+$ git clone git@github.com:MrRioja/todoServerless.git
 
-> :warning: As is, this template, once deployed, opens a **public** endpoint within your AWS account resources. Anybody with the URL can actively execute the API Gateway endpoint and the corresponding lambda. You should protect this endpoint with the authentication method of your choice.
+# Acesse a pasta do projeto no terminal/cmd
+$ cd todoServerless
 
-### Locally
+# Instale as dependências
+$ npm install
+# Caso prefira usar o Yarn execute o comando abaixo
+$ yarn
 
-In order to test the hello function locally, run the following command:
-
-- `npx sls invoke local -f hello --path src/functions/hello/mock.json` if you're using NPM
-- `yarn sls invoke local -f hello --path src/functions/hello/mock.json` if you're using Yarn
-
-Check the [sls invoke local command documentation](https://www.serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/) for more information.
-
-### Remotely
-
-Copy and replace your `url` - found in Serverless `deploy` command output - and `name` parameter in the following `curl` command in your terminal or in Postman to test your newly deployed application.
-
-```
-curl --location --request POST 'https://myApiEndpoint/dev/hello' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "name": "Frederic"
-}'
-```
-
-## Template features
-
-### Project structure
-
-The project code base is mainly located within the `src` folder. This folder is divided in:
-
-- `functions` - containing code base and configuration for your lambda functions
-- `libs` - containing shared code base between your lambdas
-
-```
-.
-├── src
-│   ├── functions               # Lambda configuration and source code folder
-│   │   ├── hello
-│   │   │   ├── handler.ts      # `Hello` lambda source code
-│   │   │   ├── index.ts        # `Hello` lambda Serverless configuration
-│   │   │   ├── mock.json       # `Hello` lambda input parameter, if any, for local invocation
-│   │   │   └── schema.ts       # `Hello` lambda input event JSON-Schema
-│   │   │
-│   │   └── index.ts            # Import/export of all lambda configurations
-│   │
-│   └── libs                    # Lambda shared code
-│       └── apiGateway.ts       # API Gateway specific helpers
-│       └── handlerResolver.ts  # Sharable library for resolving lambda handlers
-│       └── lambda.ts           # Lambda middleware
-│
-├── package.json
-├── serverless.ts               # Serverless service file
-├── tsconfig.json               # Typescript compiler configuration
-├── tsconfig.paths.json         # Typescript paths
-└── webpack.config.js           # Webpack configuration
+# Execute a aplicação em modo de desenvolvimento
+$ npm run dev
+# Caso prefira usar o Yarn execute o comando abaixo
+$ yarn dev
 ```
 
-### 3rd party libraries
+## Tecnologias
 
-- [json-schema-to-ts](https://github.com/ThomasAribart/json-schema-to-ts) - uses JSON-Schema definitions used by API Gateway for HTTP request validation to statically generate TypeScript types in your lambda's handler code base
-- [middy](https://github.com/middyjs/middy) - middleware engine for Node.Js lambda. This template uses [http-json-body-parser](https://github.com/middyjs/middy/tree/master/packages/http-json-body-parser) to convert API Gateway `event.body` property, originally passed as a stringified JSON, to its corresponding parsed object
-- [@serverless/typescript](https://github.com/serverless/typescript) - provides up-to-date TypeScript definitions for your `serverless.ts` service file
+<img align="left" src="https://profilinator.rishav.dev/skills-assets/nodejs-original-wordmark.svg" alt="Node.js" height="75" />
 
-### Advanced usage
+<img align="left" src="https://user-images.githubusercontent.com/2752551/30405068-a7733b34-989e-11e7-8f66-7badaf1373ed.png" alt="Serverless Framework" height="75"/>
 
-Any tsconfig.json can be used, but if you do, set the environment variable `TS_NODE_CONFIG` for building the application, eg `TS_NODE_CONFIG=./tsconfig.app.json npx serverless webpack`
+<br><br><br>
+
+## Autor
+
+<div align="center">
+<img src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/55336456?v=4&h=100&w=100&fit=cover&mask=circle&maxage=7d" />
+<h1>Luiz Rioja</h1>
+<strong>Backend Developer</strong>
+<br/>
+<br/>
+
+<a href="https://linkedin.com/in/luizrioja" target="_blank">
+<img alt="LinkedIn" src="https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"/>
+</a>
+
+<a href="https://github.com/mrrioja" target="_blank">
+<img alt="GitHub" src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/>
+</a>
+
+<a href="mailto:lulyrioja@gmail.com?subject=Fala%20Dev" target="_blank">
+<img alt="Gmail" src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" />
+</a>
+
+<a href="https://api.whatsapp.com/send?phone=5511933572652" target="_blank">
+<img alt="WhatsApp" src="https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white"/>
+</a>
+
+<a href="https://join.skype.com/invite/tvBbOq03j5Uu" target="_blank">
+<img alt="Skype" src="https://img.shields.io/badge/SKYPE-%2300AFF0.svg?style=for-the-badge&logo=Skype&logoColor=white"/>
+</a>
+
+<br/>
+<br/>
+</div>
